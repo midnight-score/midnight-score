@@ -2,15 +2,17 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
-    full_name: {type: String , required: true},
-    profession: String,
-    current_location: {type: String , required: true},
-    dob: String,
-    email: {type: String , required: true},
-    gender: {type: String , required: true},
-    rating: {type: Number},
-    successful_data: {type: Number},
-    profile_views: {type: Number}
+    // full_name: { type: String, required: true },
+    // rating: { type: Number },
+    // profile_views: { type: Number },
+    // successful_dates: { type: Number },
+    // dob: { type: String, required: true },
+    // email: { type: String, required: true },
+    // gender: { type: String, required: true },
+    // profession: { type: String, required: true },
+    phone_number: { type: String, required: true },
+    // current_location: { type: String, required: true },
+    // pending_requests: [{type: Schema.Types.ObjectId, ref: 'User'}],
 });
 
 module.exports = mongoose.model('user', UserSchema);
