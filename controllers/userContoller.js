@@ -1,5 +1,7 @@
 const UserSchema = require('../model/user');
 const constM = require('../config/constants')
+
+
 module.exports.signup = function(req, res){
   
     const bodyData = req.body;
@@ -30,6 +32,13 @@ module.exports.signup = function(req, res){
              user.current_location = bodyData.current_location;
         else
             return res.json({status: constM.not_found.status, message: constM.not_found.message});
+        
+        if(bodyData.age)
+            user.age = bodyData.age;
+        else
+            return res.json({status: constM.not_found.status, message: constM.not_found.message});
+        
+        
         
     })
   

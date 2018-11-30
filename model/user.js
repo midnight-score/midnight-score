@@ -6,7 +6,7 @@ var UserSchema = new Schema({
     // rating: { type: Number },
     // profile_views: { type: Number },
     // successful_dates: { type: Number },
-    // dob: { type: String, required: true },
+    // age: { type: String, required: true },
     // email: { type: String, required: true },
     // gender: { type: String, required: true },
     // profession: { type: String, required: true },
