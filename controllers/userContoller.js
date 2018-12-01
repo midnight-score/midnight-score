@@ -38,7 +38,9 @@ module.exports.signup = function(req, res){
         else
             return res.json({status: constM.not_found.status, message: constM.not_found.message});
         
-        
+        user.save(function(user){
+            return res.json({status: constM.success.status, message: constM.success.message});
+        });
         
     })
   
