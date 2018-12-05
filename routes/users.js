@@ -6,11 +6,11 @@ var userController = require('../controllers/userContoller');
 //TODO: auth require
 router.post('/signup', userController.signup);
 router.post('/login', userController.login);
+router.param('id', userController.getIdParam);
 router.get('/homepage', userController.homepage);
 router.get('/profile/:id',  userController.profile);
-router.param('id', userController.getIdParam);
 router.get('/edit/:id', userController.editProfileOptions);
-
+router.put('/update/:id', userController.updateProfile);
 
 
 

@@ -1,6 +1,6 @@
 module.exports = {
     not_found: {
-        status: 404,
+        status: 403,
         message: 'Resourse Not Found'
     },
     success: {

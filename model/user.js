@@ -80,7 +80,6 @@ UserSchema.methods.toProfileJSON = function (userId) {
             rating: this.rating,
             gender: this.gender,
             current_location: this.current_location,
-
         }
 };
 
@@ -91,7 +90,13 @@ UserSchema.methods.ProfileJSONFor = function (userId) {
         current_location: this.current_location,
         image: this.image,
         gender: this.gender,
-        avilable_status: this.avilable_status
+        service_rate: this.service_generator.service_rate,
+        likes: this.service_generator.liked.length,
+        avilable_status: this.avilable_status,
+        avilable_times: this.service_generator.avilable_times
+            .map(time=> {
+                return time.times
+            }),
     }
 }
 

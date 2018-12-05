@@ -120,9 +120,13 @@ module.exports.homepage = async function (req, res) {
 
 //profile page
 module.exports.profile = function (req, res, next) {
-    UserSchema.find(req.param.id).then(function (user) {
-        return user.toProfileJSONFOR;
-    })
+    console.log("profile", req.user.id)
+    UserSchema.findById(req.user.id)
+        .populate('service_generator')
+        .then(function (user) {
+            console.log(user)
+            return res.json({ data: user.ProfileJSONFor() });
+        })
 }
 
 //preloading id params
@@ -131,6 +135,7 @@ module.exports.getIdParam = function (req, res, next, id) {
     UserSchema.findById(id).then(function (user) {
         if (!user) { return res.sendStatus(404) }
         req.user = user;
+        console.log('*******params**********');
         return next();
 
     }).catch(next);
@@ -155,4 +160,66 @@ module.exports.editProfileOptions = function (req, res, next) {
                 image: s.image.map(img => { return img })
             });
         });
-} 
+};
+
+
+
+//update provider profile
+
+module.exports.updateProfile = function (req, res, next) {
+    var data = req.body;
+    UserSchema.findById(req.user.id)
+        .populate('service_generator')
+        .then(function (user) {
+            if (!data.full_name) {
+                return res.json({ status: 403 })
+            } else {
+                user.full_name = data.full_name
+            }
+            if (data.gender)
+                user.gender = data.gender;
+            else
+                return res.json({ status: constM.not_found.status, message: constM.not_found.message });
+
+
+            if (data.phone_number)
+                user.phone_number = data.phone_number;
+            else
+                return res.json({ status: constM.not_found.status, message: constM.not_found.message });
+
+            if (data.current_location)
+                user.current_location = data.current_location;
+            else
+                return res.json({ status: constM.not_found.status, message: constM.not_found.message });
+
+            if (data.age)
+                user.age = data.age;
+            else
+                return res.json({ status: constM.not_found.status, message: constM.not_found.message });
+            if (data.service_rate) {
+                ProviderSchema.findById(user.service_generator._id)
+                    .update({ service_rate: data.service_rate })
+                    .then(function (provider) {
+                        console.log(provider)
+                    })
+            } else {
+                return res.sendStatus(403);
+            }
+            if (data.avilable_status) {
+                ProviderSchema.findById(user.service_generator._id)
+                    .update({ avilable_status: data.avilable_status })
+                    .then(function (provider) {
+                        console.log(provider)
+                    })
+            } else {
+                res.sendStatus(403);
+            }
+
+
+            user.save().then(function () {
+
+                return res.json("success");
+
+            });
+        })
+}
