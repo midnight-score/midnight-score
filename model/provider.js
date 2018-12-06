@@ -74,12 +74,17 @@ UserSchema.methods.editProfileJSON = function (userId) {
 
 UserSchema.methods.ProfileJSONFor = function (userId) {
     return {
-        full_name: tihs.full_name,
+        full_name: this.full_name,
         age: this.age,
         current_location: this.current_location,
         avilable_status: this.avilable_status,
         image: this.image
     }
+}
+
+UserSchema.methods.requestedBook = function(user){
+    this.service_requested_from.push(user);
+    return this.save();
 }
 
 

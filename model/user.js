@@ -58,7 +58,8 @@ var UserSchema = new Schema({
     },
     service_generator: {
         type: Schema.Types.ObjectId,
-        ref: 'provider' 
+        ref: 'provider',
+        autopopulate: true 
         // this.user_type === 'provider' ? 'provider' : 'client'
     },
     service_consumer: {
@@ -71,6 +72,18 @@ var UserSchema = new Schema({
     },
 });
 UserSchema.plugin(uniqueValidator, { message: 'Phone Number already Exists' });
+UserSchema.plugin(require('mongoose-autopopulate'));
+// JWT Token 
+UserSchema.methods.generateJWT = function() {
+    let today = new Date();
+    let exp = new Date(today);
+    exp.setDate(today.getDate() + 60);
+    return jsonwebtoken.sign({
+        id:this._id,
+        username:this.email,
+        exp : parseInt(exp.getTime() / 1000),
+    }, secret);
+};
 
 UserSchema.methods.toProfileJSON = function (userId) {
         return {
@@ -99,6 +112,7 @@ UserSchema.methods.ProfileJSONFor = function (userId) {
             }),
     }
 }
+
 
 
 module.exports = mongoose.model('user', UserSchema);            

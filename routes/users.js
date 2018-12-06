@@ -8,10 +8,11 @@ router.post('/signup', userController.signup);
 router.post('/login', userController.login);
 router.param('id', userController.getIdParam);
 router.get('/homepage', userController.homepage);
-router.get('/profile/:id',  userController.profile);
-router.get('/edit/:id', userController.editProfileOptions);
+// router.get('/profile/:id',  userController.profile);
+router.get('/edit/:id', userController.editProfileData);
 router.put('/update/:id', userController.updateProfile);
-
+router.get('/provider/:id', userController.providerProfile);
+router.post('/provider/:id/book', userController.bookingProvider)
 
 
 //mongoose validation errors 

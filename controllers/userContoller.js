@@ -94,22 +94,21 @@ module.exports.login = function (req, res) {
 module.exports.homepage = async function (req, res) {
     var popularINarea = [];
     await UserSchema.find({ current_location: 'Kathmandu' })
-        .populate('provider')
+        // .populate('service_provider')
         .sort({ rating: -1 })
         .limit(5)
         .then(function (results) {
             results.map(user => {
-                console.log("popular in ares", user._id);
                 popularINarea.push(user.toProfileJSON(user._id));
             })
         });
-    console.log("///////////////////", popularINarea);
     var overallTOP = [];
     await UserSchema.find({})
-        .populate('provider')
+        .populate('service_provider')
         .sort({ rating: -1 })
         .limit(10)
         .then(function (results) {
+            console.log(results)
             results.map(user => {
                 overallTOP.push(user.toProfileJSON(user._id));
                 // return user.toProfileJSON(user.id);
@@ -118,16 +117,16 @@ module.exports.homepage = async function (req, res) {
     return res.json({ ovarallTOP: overallTOP, popularINarea: popularINarea });
 }
 
-//profile page
-module.exports.profile = function (req, res, next) {
-    console.log("profile", req.user.id)
-    UserSchema.findById(req.user.id)
-        .populate('service_generator')
-        .then(function (user) {
-            console.log(user)
-            return res.json({ data: user.ProfileJSONFor() });
-        })
-}
+// //profile page
+// module.exports.profile = function (req, res, next) {
+//     console.log("profile", req.user.id)
+//     UserSchema.findById(req.user.id)
+//         .populate('service_generator')
+//         .then(function (user) {
+//             console.log(user)
+//             return res.json({ data: user.ProfileJSONFor() });
+//         })
+// }
 
 //preloading id params
 
@@ -142,7 +141,7 @@ module.exports.getIdParam = function (req, res, next, id) {
 }
 
 //profile page edit options
-module.exports.editProfileOptions = function (req, res, next) {
+module.exports.editProfileData = function (req, res, next) {
     UserSchema.findById(req.user.id)
         .populate('service_generator')
         .then(function (user) {
@@ -165,37 +164,38 @@ module.exports.editProfileOptions = function (req, res, next) {
 
 
 //update provider profile
-
 module.exports.updateProfile = function (req, res, next) {
     var data = req.body;
     UserSchema.findById(req.user.id)
         .populate('service_generator')
         .then(function (user) {
-            if (!data.full_name) {
-                return res.json({ status: 403 })
-            } else {
+            if (data.full_name)
                 user.full_name = data.full_name
-            }
+            else
+                return res.sendStatus(403)
+
             if (data.gender)
                 user.gender = data.gender;
             else
-                return res.json({ status: constM.not_found.status, message: constM.not_found.message });
-
+                return res.sendStatus(403);
 
             if (data.phone_number)
                 user.phone_number = data.phone_number;
             else
-                return res.json({ status: constM.not_found.status, message: constM.not_found.message });
+                return res.sendStatus(403);
 
             if (data.current_location)
                 user.current_location = data.current_location;
             else
-                return res.json({ status: constM.not_found.status, message: constM.not_found.message });
+                return res.sendStatus(403);
+
 
             if (data.age)
                 user.age = data.age;
             else
-                return res.json({ status: constM.not_found.status, message: constM.not_found.message });
+                return res.sendStatus(403);
+
+            //TODO: service timing 
             if (data.service_rate) {
                 ProviderSchema.findById(user.service_generator._id)
                     .update({ service_rate: data.service_rate })
@@ -214,12 +214,35 @@ module.exports.updateProfile = function (req, res, next) {
             } else {
                 res.sendStatus(403);
             }
-
-
             user.save().then(function () {
 
-                return res.json("success");
+                return res.sendStatus(200);
 
             });
         })
+}
+
+//provider detailing page as per the user view
+module.exports.providerProfile = function (req, res, next) {
+    UserSchema.findById(req.user._id)
+        // .populate('service_generator')
+        .then(function (user) {
+            return res.json(user.ProfileJSONFor());
+        })
+}
+
+//booking a provider 
+//TODO: getting client id using auth.required via req.payload.id
+module.exports.bookingProvider = function(req, res, next){
+    console.log(req.user);
+    //get cilent data here
+    UserSchema.findById(req.user._id)
+    .then(function(user){
+        if(!user){ return res.sendStatus(404);}
+        ProviderSchema.findOne({full_info: req.user._id})
+        .then(function(provider){
+            console.log(provider)
+            return res.json({status: 200, userdata: provider.requestedBook(user)})        
+        })
+    });
 }
