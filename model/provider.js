@@ -1,9 +1,9 @@
-var mongoose = require('mongoose');
-var uniqueValidator = require('mongoose-unique-validator');
+let mongoose = require('mongoose');
+let uniqueValidator = require('mongoose-unique-validator');
 
-var Schema = mongoose.Schema;
+let Schema = mongoose.Schema;
 
-var UserSchema = new Schema({
+let UserSchema = new Schema({
     full_info: {
         type: Schema.Types.ObjectId,
         ref: 'user'
@@ -60,7 +60,7 @@ var UserSchema = new Schema({
     }]
 
 
-});
+},{timestamps:true});
 UserSchema.plugin(uniqueValidator, { message: 'Phone Number already Exists' });
 
 UserSchema.methods.editProfileJSON = function (userId) {
