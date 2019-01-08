@@ -1,11 +1,15 @@
-var mongoose = require('mongoose');
-var uniqueValidator = require('mongoose-unique-validator');
-var ProviderSchema = require('../model/provider')
-var ClientSchema = require('../model/client')
-var Schema = mongoose.Schema;
+let mongoose = require('mongoose');
+let uniqueValidator = require('mongoose-unique-validator');
+let ProviderSchema = require('../model/provider')
+let ClientSchema = require('../model/client')
+let Schema = mongoose.Schema;
 
-var UserSchema = new Schema({
-    full_name: {
+let UserSchema = new Schema({
+    first_name: {
+        type: String,
+        required: true
+    },
+    last_name: {
         type: String,
         required: true
     },
@@ -19,14 +23,12 @@ var UserSchema = new Schema({
     },
     gender: {
         type: String,
+        enum:['male','female'],
         required: true
     },
-    profession: {
-        type: String,
-        required: true
-    },
+
     phone_number: {
-        type: Number,
+        type: String,
         required: true,
         unique: true
     },
@@ -54,7 +56,7 @@ var UserSchema = new Schema({
     }],
     user_type: {
         type: String,
-        default: 'provider'
+        enum:['provider','client'],
     },
     service_generator: {
         type: Schema.Types.ObjectId,
